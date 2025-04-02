@@ -1,0 +1,12 @@
+specVersion: "v1"
+serviceId: "new-study-record"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "fdcdb"
+      cloudSql:
+        instanceId: "new-study-record-fdc"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]
