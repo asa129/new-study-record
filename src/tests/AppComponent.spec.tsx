@@ -1,9 +1,12 @@
+import React from "react";
 import App from "../App";
 import { render, screen } from "@testing-library/react";
 
 describe("title", () => {
-  it("should render title", () => {
+  it("should render title", async () => {
     render(<App />);
-    expect(screen.getByText("Hello World")).toBeInTheDocument();
+    expect((await screen.findByTestId("title")).textContent).toBe(
+      "Hello World"
+    );
   });
 });
