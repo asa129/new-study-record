@@ -54,8 +54,6 @@ jobs:
         with:
           name: dist
           path: dist
-      - name: Run deploy
-        run: firebase deploy
       - name: Deploy to Firebase
         uses: joinflux/firebase-tools@v9.16.0
         with:
