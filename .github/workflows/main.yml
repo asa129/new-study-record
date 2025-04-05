@@ -18,8 +18,7 @@ jobs:
       - name: Run build
         run: npm run build
 
-jobs:
-    name: test
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -32,4 +31,3 @@ jobs:
         run: npm install
       - name: Run test
         run: npm run test
-
