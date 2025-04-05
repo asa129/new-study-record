@@ -5,7 +5,7 @@ describe("title", () => {
   it("should render title", async () => {
     render(<App />);
     expect((await screen.findByTestId("title")).textContent).toBe(
-      "Hello World"
+      "新・学習記録アプリ"
     );
   });
 });
