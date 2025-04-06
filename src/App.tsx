@@ -1,6 +1,15 @@
 import { Box, Divider, Heading } from "@chakra-ui/react";
+import { useEffect } from "react";
+import { GetAllStudyRecords } from "./lib/study-record";
 
 function App() {
+  useEffect(() => {
+    const getAllStudyRecords = async () => {
+      const records = await GetAllStudyRecords();
+      console.log(records);
+    };
+    getAllStudyRecords();
+  }, []);
   return (
     <>
       <Box
