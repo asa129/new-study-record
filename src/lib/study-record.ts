@@ -1,7 +1,7 @@
 import { supabase } from "../utils/supabase";
-import { StudyRecord } from "../domain/StudyRecord";
+import { Record } from "../domain/record";
 
-export const GetAllStudyRecords: () => Promise<StudyRecord[]> = async () => {
+export const GetAllStudyRecords: () => Promise<Record[]> = async () => {
   const { data, error } = await supabase.from("study-record").select();
 
   if (error) {
@@ -10,7 +10,7 @@ export const GetAllStudyRecords: () => Promise<StudyRecord[]> = async () => {
 
   const StudyRecords = data.map(
     (record) =>
-      new StudyRecord(record.id, record.title, record.time, record.created_at)
+      new Record(record.id, record.title, record.time, record.created_at)
   );
   return StudyRecords;
 };

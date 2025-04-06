@@ -18,7 +18,6 @@ function App() {
         justifyContent="center"
         h="100vh"
         w="100vw"
-        border="1px solid red"
       >
         <Box textAlign="center">
           <Heading as="h1" data-testid="title">
