@@ -1,4 +1,15 @@
-import { Box, Divider, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  Heading,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import { useEffect } from "react";
 import { GetAllStudyRecords } from "./lib/study-record";
 
@@ -18,6 +29,7 @@ function App() {
         justifyContent="center"
         h="100vh"
         w="100vw"
+        flexDirection="column"
       >
         <Box textAlign="center">
           <Heading as="h1" data-testid="title">
@@ -25,6 +37,24 @@ function App() {
           </Heading>
           <Divider m={4} />
         </Box>
+        <TableContainer>
+          <Table variant="striped" colorScheme="teal">
+            <Thead>
+              <Tr>
+                <Th>id</Th>
+                <Th>title</Th>
+                <Th>time</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              <Tr>
+                <Td>inches</Td>
+                <Td>millimetres (mm)</Td>
+                <Td isNumeric>25.4</Td>
+              </Tr>
+            </Tbody>
+          </Table>
+        </TableContainer>
       </Box>
     </>
   );
