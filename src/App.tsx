@@ -2,6 +2,7 @@ import {
   Box,
   Divider,
   Heading,
+  Spinner,
   Table,
   TableContainer,
   Tbody,
@@ -10,17 +11,40 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GetAllStudyRecords } from "./lib/study-record";
+import { Record } from "./domain/record";
 
 function App() {
+  const [studyRecords, setStudyRecords] = useState<Record[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const getAllStudyRecords = async () => {
       const records = await GetAllStudyRecords();
-      console.log(records);
+      setStudyRecords(records);
+      setIsLoading(false);
     };
     getAllStudyRecords();
   }, []);
+  if (isLoading) {
+    return (
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        h="100vh"
+        w="100vw"
+      >
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+        />
+      </Box>
+    );
+  }
   return (
     <>
       <Box
@@ -41,17 +65,23 @@ function App() {
           <Table variant="striped" colorScheme="teal">
             <Thead>
               <Tr>
-                <Th>id</Th>
                 <Th>title</Th>
                 <Th>time</Th>
+                <Th></Th>
+                <Th></Th>
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td>inches</Td>
-                <Td>millimetres (mm)</Td>
-                <Td isNumeric>25.4</Td>
-              </Tr>
+              {studyRecords.map((studyRecord) => {
+                return (
+                  <Tr key={studyRecord.id}>
+                    <Td>{studyRecord.title}</Td>
+                    <Td isNumeric>{studyRecord.time}</Td>
+                    <Td></Td>
+                    <Td></Td>
+                  </Tr>
+                );
+              })}
             </Tbody>
           </Table>
         </TableContainer>
