@@ -28,8 +28,8 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { GetAllStudyRecords } from "./lib/study-record";
+import { ChangeEvent, useEffect, useState } from "react";
+import { addStudyRecord, GetAllStudyRecords } from "./lib/study-record";
 import { Record } from "./domain/record";
 import { BsPencil } from "react-icons/bs";
 import React from "react";
@@ -39,6 +39,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const initialRef = React.useRef(null);
+  const [title, setTitle] = useState("");
+  const [time, setTime] = useState(0);
   useEffect(() => {
     const getAllStudyRecords = async () => {
       const records = await GetAllStudyRecords();
@@ -47,6 +49,13 @@ function App() {
     };
     getAllStudyRecords();
   }, []);
+  const onRecordRegist = async () => {
+    const insertData: Partial<Record> = {};
+    insertData.title = title;
+    insertData.time = time;
+    await addStudyRecord(insertData);
+    onClose();
+  };
 
   if (isLoading) {
     return (
@@ -100,11 +109,24 @@ function App() {
               <ModalBody>
                 <FormControl isRequired>
                   <FormLabel>学習内容</FormLabel>
-                  <Input ref={initialRef} placeholder="学習内容" />
+                  <Input
+                    ref={initialRef}
+                    placeholder="学習内容"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setTitle(e.target.value)
+                    }
+                  />
                 </FormControl>
                 <FormControl isRequired>
                   <FormLabel>学習時間</FormLabel>
-                  <NumberInput defaultValue={0} max={50} min={0}>
+                  <NumberInput
+                    defaultValue={0}
+                    max={50}
+                    min={0}
+                    onChange={(_, valueAsNumber: number) =>
+                      setTime(valueAsNumber)
+                    }
+                  >
                     <NumberInputField />
                     <NumberInputStepper>
                       <NumberIncrementStepper />
@@ -115,7 +137,9 @@ function App() {
               </ModalBody>
 
               <ModalFooter>
-                <Button colorScheme="teal">登録</Button>
+                <Button colorScheme="teal" onClick={onRecordRegist}>
+                  登録
+                </Button>
               </ModalFooter>
             </ModalContent>
           </Modal>
