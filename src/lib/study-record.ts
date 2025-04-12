@@ -14,3 +14,13 @@ export const GetAllStudyRecords: () => Promise<Record[]> = async () => {
   );
   return StudyRecords;
 };
+
+export const addStudyRecord = async (data: Partial<Record>) => {
+  const { error } = await supabase
+    .from("study-record")
+    .insert({ title: data.title, time: data.time });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+};
