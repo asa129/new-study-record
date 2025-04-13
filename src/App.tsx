@@ -33,27 +33,36 @@ import { addStudyRecord, GetAllStudyRecords } from "./lib/study-record";
 import { Record } from "./domain/record";
 import { BsPencil } from "react-icons/bs";
 import React from "react";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 
 function App() {
   const [studyRecords, setStudyRecords] = useState<Record[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const initialRef = React.useRef(null);
-  const [title, setTitle] = useState("");
-  const [time, setTime] = useState(0);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    control,
+  } = useForm<Partial<Record>>();
+  const getAllStudyRecords = async () => {
+    const records = await GetAllStudyRecords();
+    setStudyRecords(records);
+    setIsLoading(false);
+  };
   useEffect(() => {
-    const getAllStudyRecords = async () => {
-      const records = await GetAllStudyRecords();
-      setStudyRecords(records);
-      setIsLoading(false);
-    };
     getAllStudyRecords();
   }, []);
-  const onRecordRegist = async () => {
+  console.log("time", errors.time);
+  console.log("title", errors.title);
+  const onRecordRegist: SubmitHandler<Partial<Record>> = async (data) => {
     const insertData: Partial<Record> = {};
-    insertData.title = title;
-    insertData.time = time;
+    insertData.title = data.title;
+    insertData.time = data.time;
     await addStudyRecord(insertData);
+    getAllStudyRecords();
     onClose();
   };
 
@@ -101,46 +110,64 @@ function App() {
           >
             登録
           </Button>
-          <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
+          <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader>Modal Title</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <FormControl isRequired>
-                  <FormLabel>学習内容</FormLabel>
-                  <Input
-                    ref={initialRef}
-                    placeholder="学習内容"
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      setTitle(e.target.value)
-                    }
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>学習時間</FormLabel>
-                  <NumberInput
-                    defaultValue={0}
-                    max={50}
-                    min={0}
-                    onChange={(_, valueAsNumber: number) =>
-                      setTime(valueAsNumber)
-                    }
-                  >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                </FormControl>
-              </ModalBody>
+              <form onSubmit={handleSubmit(onRecordRegist)}>
+                <ModalHeader>Modal Title</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <FormControl>
+                    <FormLabel>学習内容</FormLabel>
+                    <Input
+                      {...register("title", { required: true })}
+                      placeholder="学習内容"
+                    />
+                    {errors.title?.type === "required" && (
+                      <p style={{ color: "red" }}>学習内容は必須です</p>
+                    )}
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>学習時間</FormLabel>
+                    <Controller
+                      name="time"
+                      control={control}
+                      rules={{ required: true, min: 0 }}
+                      render={({ field }) => (
+                        <NumberInput
+                          // defaultValue={0}
+                          // max={50}
+                          // min={0}
+                          value={field.value}
+                          onChange={(valueString) => {
+                            field.onChange(parseInt(valueString));
+                          }}
+                        >
+                          <NumberInputField />
+                          {errors.time?.type === "required" && (
+                            <p style={{ color: "red" }}>学習時間は必須です</p>
+                          )}
+                          {errors.time?.type === "min" && (
+                            <p style={{ color: "red" }}>
+                              時間は0以上である必要があります
+                            </p>
+                          )}
+                          <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                          </NumberInputStepper>
+                        </NumberInput>
+                      )}
+                    />
+                  </FormControl>
+                </ModalBody>
 
-              <ModalFooter>
-                <Button colorScheme="teal" onClick={onRecordRegist}>
-                  登録
-                </Button>
-              </ModalFooter>
+                <ModalFooter>
+                  <Button colorScheme="teal" type="submit">
+                    登録
+                  </Button>
+                </ModalFooter>
+              </form>
             </ModalContent>
           </Modal>
         </Box>
