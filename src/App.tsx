@@ -38,13 +38,20 @@ function App() {
   const [studyRecords, setStudyRecords] = useState<Record[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
     control,
   } = useForm<Partial<Record>>();
+
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
 
   // データ取得
   const getAllStudyRecords = async () => {
@@ -52,6 +59,7 @@ function App() {
     setStudyRecords(records);
     setIsLoading(false);
   };
+
   useEffect(() => {
     getAllStudyRecords();
   }, []);
@@ -63,8 +71,13 @@ function App() {
     insertData.time = data.time;
     await addStudyRecord(insertData);
     getAllStudyRecords();
+    setIsSubmitSuccessful(true);
     onClose();
   };
+
+  useEffect(() => {
+    reset();
+  }, [isSubmitSuccessful, reset]);
 
   if (isLoading) {
     return (
@@ -110,7 +123,7 @@ function App() {
           >
             登録
           </Button>
-          <Modal isOpen={isOpen} onClose={onClose}>
+          <Modal isOpen={isOpen} onClose={handleClose}>
             <ModalOverlay />
             <ModalContent>
               <form onSubmit={handleSubmit(onRecordRegist)}>
