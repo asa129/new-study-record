@@ -24,3 +24,15 @@ export const addStudyRecord = async (data: Partial<Record>) => {
     throw new Error(error.message);
   }
 };
+
+export const deleteStudyRecordById = async (id: string) => {
+  const { error } = await supabase
+    .from("study-record")
+    .delete()
+    .eq("id", id)
+    .select();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+};

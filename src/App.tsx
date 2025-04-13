@@ -29,9 +29,14 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { addStudyRecord, GetAllStudyRecords } from "./lib/study-record";
+import {
+  addStudyRecord,
+  deleteStudyRecordById,
+  GetAllStudyRecords,
+} from "./lib/study-record";
 import { Record } from "./domain/record";
 import { BsPencil } from "react-icons/bs";
+import { AiOutlineDelete } from "react-icons/ai";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 
 function App() {
@@ -78,6 +83,12 @@ function App() {
   useEffect(() => {
     reset();
   }, [isSubmitSuccessful, reset]);
+
+  // データ削除
+  const onRecordDelete = async (id: string) => {
+    await deleteStudyRecordById(id);
+    getAllStudyRecords();
+  };
 
   if (isLoading) {
     return (
@@ -189,7 +200,7 @@ function App() {
                   <Th>title</Th>
                   <Th>time</Th>
                   <Th>編集</Th>
-                  <Th>削除</Th>
+                  <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -199,7 +210,14 @@ function App() {
                       <Td>{studyRecord.title}</Td>
                       <Td isNumeric>{studyRecord.time}</Td>
                       <Td>編集</Td>
-                      <Td>削除</Td>
+                      <Td>
+                        <Button
+                          leftIcon={<AiOutlineDelete />}
+                          backgroundColor="transparent"
+                          _hover={{ backgroundColor: "transparent" }}
+                          onClick={() => onRecordDelete(studyRecord.id)}
+                        />
+                      </Td>
                     </Tr>
                   );
                 })}
