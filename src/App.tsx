@@ -28,11 +28,10 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { addStudyRecord, GetAllStudyRecords } from "./lib/study-record";
 import { Record } from "./domain/record";
 import { BsPencil } from "react-icons/bs";
-import React from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 
 function App() {
@@ -44,9 +43,10 @@ function App() {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
     control,
   } = useForm<Partial<Record>>();
+
+  // データ取得
   const getAllStudyRecords = async () => {
     const records = await GetAllStudyRecords();
     setStudyRecords(records);
@@ -55,8 +55,8 @@ function App() {
   useEffect(() => {
     getAllStudyRecords();
   }, []);
-  console.log("time", errors.time);
-  console.log("title", errors.title);
+
+  // データ登録
   const onRecordRegist: SubmitHandler<Partial<Record>> = async (data) => {
     const insertData: Partial<Record> = {};
     insertData.title = data.title;
@@ -135,9 +135,6 @@ function App() {
                       rules={{ required: true, min: 0 }}
                       render={({ field }) => (
                         <NumberInput
-                          // defaultValue={0}
-                          // max={50}
-                          // min={0}
                           value={field.value}
                           onChange={(valueString) => {
                             field.onChange(parseInt(valueString));
