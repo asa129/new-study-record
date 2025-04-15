@@ -105,6 +105,7 @@ function App() {
           emptyColor="gray.200"
           color="blue.500"
           size="xl"
+          data-testid="loading"
         />
       </Box>
     );
