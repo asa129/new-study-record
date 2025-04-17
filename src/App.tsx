@@ -132,10 +132,11 @@ function App() {
             colorScheme="teal"
             variant="solid"
             onClick={onOpen}
+            data-testid="new-record-button"
           >
             登録
           </Button>
-          <Modal isOpen={isOpen} onClose={handleClose}>
+          <Modal isOpen={isOpen} onClose={handleClose} data-testid="modal">
             <ModalOverlay />
             <ModalContent>
               <form onSubmit={handleSubmit(onRecordRegist)}>
@@ -147,6 +148,7 @@ function App() {
                     <Input
                       {...register("title", { required: true })}
                       placeholder="学習内容"
+                      data-testid="title-input"
                     />
                     {errors.title?.type === "required" && (
                       <p style={{ color: "red" }}>学習内容は必須です</p>
@@ -164,6 +166,7 @@ function App() {
                           onChange={(valueString) => {
                             field.onChange(parseInt(valueString));
                           }}
+                          data-testid="time-input"
                         >
                           <NumberInputField />
                           {errors.time?.type === "required" && (
@@ -185,7 +188,11 @@ function App() {
                 </ModalBody>
 
                 <ModalFooter>
-                  <Button colorScheme="teal" type="submit">
+                  <Button
+                    colorScheme="teal"
+                    type="submit"
+                    data-testid="submit-button"
+                  >
                     登録
                   </Button>
                 </ModalFooter>
@@ -195,7 +202,7 @@ function App() {
         </Box>
         <Box w="40%">
           <TableContainer>
-            <Table variant="striped" colorScheme="teal">
+            <Table variant="striped" colorScheme="teal" data-testid="table">
               <Thead>
                 <Tr>
                   <Th>title</Th>
@@ -207,7 +214,7 @@ function App() {
               <Tbody>
                 {studyRecords.map((studyRecord) => {
                   return (
-                    <Tr key={studyRecord.id}>
+                    <Tr key={studyRecord.id} data-testid="table-row">
                       <Td>{studyRecord.title}</Td>
                       <Td isNumeric>{studyRecord.time}</Td>
                       <Td>編集</Td>
