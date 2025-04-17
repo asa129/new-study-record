@@ -140,7 +140,7 @@ function App() {
             <ModalOverlay />
             <ModalContent>
               <form onSubmit={handleSubmit(onRecordRegist)}>
-                <ModalHeader>新規登録</ModalHeader>
+                <ModalHeader data-testid="modal-title">新規登録</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                   <FormControl>

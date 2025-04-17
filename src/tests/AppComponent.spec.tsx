@@ -93,4 +93,12 @@ describe("title", () => {
     expect(await screen.findByText("Test Title")).toBeInTheDocument();
     expect(await screen.findByText("60")).toBeInTheDocument();
   });
+
+  it("モーダルが新規登録というタイトルで表示される", async () => {
+    render(<App />);
+    await userEvent.click(await screen.findByTestId("new-record-button"));
+    expect(await screen.findByTestId("modal-title")).toHaveTextContent(
+      "新規登録"
+    );
+  });
 });
