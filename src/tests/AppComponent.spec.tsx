@@ -101,4 +101,39 @@ describe("title", () => {
       "新規登録"
     );
   });
+
+  it("学習内容がないときに登録するとエラーがでる", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await userEvent.click(await screen.findByTestId("new-record-button"));
+    const timeInput = await screen.findByTestId("time-input");
+    const input = timeInput.querySelector('input[role="spinbutton"]');
+    await user.clear(input!);
+    await user.type(input!, "60");
+
+    // フォームエラーがないことを確認するために少し待つ
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // 登録ボタンをクリック
+    await userEvent.click(await screen.findByTestId("submit-button"));
+
+    expect(await screen.findByText("学習内容は必須です")).toBeInTheDocument();
+  });
+
+  it("学習時間がないときに登録するとエラーがでる", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await userEvent.click(await screen.findByTestId("new-record-button"));
+    await user.type(await screen.findByTestId("title-input"), "Test Title");
+
+    // フォームエラーがないことを確認するために少し待つ
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // 登録ボタンをクリック
+    await userEvent.click(await screen.findByTestId("submit-button"));
+
+    screen.debug();
+
+    expect(await screen.findByText("学習時間は必須です")).toBeInTheDocument();
+  });
 });
