@@ -1,13 +1,8 @@
 import App from "../App";
-import {
-  fireEvent,
-  render,
-  screen,
-  act,
-  waitFor,
-} from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { addStudyRecord, GetAllStudyRecords } from "../lib/study-record";
 import userEvent from "@testing-library/user-event";
+import { Record } from "../domain/record";
 
 // 非同期関数をモック
 jest.mock("../lib/study-record", () => ({
@@ -47,7 +42,7 @@ describe("title", () => {
 
   it("登録ができる", async () => {
     // モックデータを準備
-    const mockData: any[] = [];
+    const mockData: Partial<Record>[] = [];
 
     // GetAllStudyRecordsの実装: 初回は空配列、2回目は登録されたデータを含む配列を返す
     (GetAllStudyRecords as jest.Mock).mockImplementation(() => {
