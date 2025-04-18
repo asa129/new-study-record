@@ -224,6 +224,7 @@ function App() {
                           backgroundColor="transparent"
                           _hover={{ backgroundColor: "transparent" }}
                           onClick={() => onRecordDelete(studyRecord.id)}
+                          data-testid="delete-button"
                         />
                       </Td>
                     </Tr>

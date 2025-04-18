@@ -1,6 +1,10 @@
 import App from "../App";
 import { render, screen, waitFor } from "@testing-library/react";
-import { addStudyRecord, GetAllStudyRecords } from "../lib/study-record";
+import {
+  addStudyRecord,
+  deleteStudyRecordById,
+  GetAllStudyRecords,
+} from "../lib/study-record";
 import userEvent from "@testing-library/user-event";
 import { Record } from "../domain/record";
 
@@ -8,9 +12,10 @@ import { Record } from "../domain/record";
 jest.mock("../lib/study-record", () => ({
   GetAllStudyRecords: jest.fn(),
   addStudyRecord: jest.fn(),
+  deleteStudyRecordById: jest.fn(),
 }));
 
-describe("title", () => {
+describe("App", () => {
   beforeEach(() => {
     // テスト前にモックをリセット
     jest.clearAllMocks();
@@ -135,5 +140,42 @@ describe("title", () => {
     screen.debug();
 
     expect(await screen.findByText("学習時間は必須です")).toBeInTheDocument();
+  });
+
+  it("削除ができること", async () => {
+    // モックデータを準備
+    const mockData: Partial<Record>[] = [
+      { id: "1", title: "Test Title", time: 60 },
+    ];
+
+    // GetAllStudyRecordsの実装: 初回はモックデータを返す
+    (GetAllStudyRecords as jest.Mock).mockImplementation(() => {
+      return Promise.resolve(mockData);
+    });
+
+    // 削除処理をモック
+    (deleteStudyRecordById as jest.Mock).mockImplementation(() => {
+      // モックデータから削除する
+      const index = mockData.findIndex((record) => record.id === "1");
+      if (index !== -1) {
+        mockData.splice(index, 1);
+      }
+      // 再レンダリングをトリガーするためにGetAllStudyRecordsを再設定
+      (GetAllStudyRecords as jest.Mock).mockResolvedValue([...mockData]);
+      return Promise.resolve(); // 成功したことにする
+    });
+
+    render(<App />);
+
+    // データが表示されることを確認
+    expect(await screen.findByText("Test Title")).toBeInTheDocument();
+
+    // 削除ボタンをクリック
+    await userEvent.click(await screen.findByTestId("delete-button"));
+
+    // 削除されたデータが表示されないことを確認
+    await waitFor(() => {
+      expect(screen.queryByText("Test Title")).not.toBeInTheDocument();
+    });
   });
 });
