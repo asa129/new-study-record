@@ -30,10 +30,14 @@ describe("App", () => {
     );
   });
 
-  // it("ローディング画面をみることができる", async () => {
-  //   render(<App />);
-  //   expect(await screen.findByTestId("loading")).toBeInTheDocument();
-  // });
+  it("ローディング画面をみることができる", async () => {
+    // GetAllStudyRecordsのモックを遅延させる
+    (GetAllStudyRecords as jest.Mock).mockImplementation(
+      () => new Promise((resolve) => setTimeout(() => resolve([]), 100))
+    );
+    render(<App />);
+    expect(await screen.findByTestId("loading")).toBeInTheDocument();
+  });
 
   it("テーブルをみることができる", async () => {
     render(<App />);
@@ -92,7 +96,6 @@ describe("App", () => {
     });
 
     console.log("mockData", mockData);
-    screen.debug();
 
     // 登録されたデータが表示されることを確認
     expect(await screen.findByText("Test Title")).toBeInTheDocument();
@@ -136,8 +139,6 @@ describe("App", () => {
 
     // 登録ボタンをクリック
     await userEvent.click(await screen.findByTestId("submit-button"));
-
-    screen.debug();
 
     expect(await screen.findByText("学習時間は必須です")).toBeInTheDocument();
   });
