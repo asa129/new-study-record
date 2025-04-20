@@ -37,6 +37,7 @@ import {
 import { Record } from "./domain/record";
 import { BsPencil } from "react-icons/bs";
 import { AiOutlineDelete } from "react-icons/ai";
+import { TbEditCircle } from "react-icons/tb";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 
 function App() {
@@ -207,7 +208,7 @@ function App() {
                 <Tr>
                   <Th>title</Th>
                   <Th>time</Th>
-                  <Th>編集</Th>
+                  <Th></Th>
                   <Th></Th>
                 </Tr>
               </Thead>
@@ -217,10 +218,16 @@ function App() {
                     <Tr key={studyRecord.id} data-testid="table-row">
                       <Td>{studyRecord.title}</Td>
                       <Td isNumeric>{studyRecord.time}</Td>
-                      <Td>編集</Td>
                       <Td>
                         <Button
-                          leftIcon={<AiOutlineDelete />}
+                          rightIcon={<TbEditCircle />}
+                          backgroundColor="transparent"
+                          _hover={{ backgroundColor: "transparent" }}
+                        />
+                      </Td>
+                      <Td>
+                        <Button
+                          rightIcon={<AiOutlineDelete />}
                           backgroundColor="transparent"
                           _hover={{ backgroundColor: "transparent" }}
                           onClick={() => onRecordDelete(studyRecord.id)}
