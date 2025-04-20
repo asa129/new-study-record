@@ -179,4 +179,32 @@ describe("App", () => {
       expect(screen.queryByText("Test Title")).not.toBeInTheDocument();
     });
   });
+
+  it("モーダルのタイトルが記録編集である", async () => {
+    const user = userEvent.setup();
+    // モックデータを作る
+    const mockData: Partial<Record>[] = [
+      { id: "1", title: "タイトル", time: 3 },
+    ];
+
+    // 初期表示用のデータ取得
+    (GetAllStudyRecords as jest.Mock).mockImplementation(() => {
+      return Promise.resolve(mockData);
+    });
+
+    render(<App />);
+
+    // 初期表示できることを確認
+    expect(await screen.findByTestId("title")).toBeInTheDocument();
+
+    // 編集ボタン押下
+    await user.click(await screen.findByTestId("edit-button"));
+
+    // モーダルが表示されるまで少し待つ
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect((await screen.findByTestId("modal-title")).textContent).toBe(
+      "記録編集"
+    );
+  });
 });

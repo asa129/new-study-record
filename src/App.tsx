@@ -268,6 +268,7 @@ function App() {
                               time: studyRecord.time,
                             })
                           }
+                          data-testid="edit-button"
                         />
                       </Td>
                       <Td>
