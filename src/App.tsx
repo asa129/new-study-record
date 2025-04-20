@@ -33,6 +33,7 @@ import {
   addStudyRecord,
   deleteStudyRecordById,
   GetAllStudyRecords,
+  updateStudyRecordById,
 } from "./lib/study-record";
 import { Record } from "./domain/record";
 import { BsPencil } from "react-icons/bs";
@@ -109,14 +110,19 @@ function App() {
   const handleEdit = async (data: Partial<Record>) => {
     reset();
     // フォームの値をセット
+    setValue("id", data.id);
     setValue("title", data.title);
     setValue("time", data.time);
     onEditModalOpen();
   };
 
   // データ編集
-  const onRecordEdit = () => {
+  const onRecordEdit: SubmitHandler<Partial<Record>> = async (data) => {
     // 編集処理
+    await updateStudyRecordById(data);
+    await getAllStudyRecords();
+    setIsSubmitSuccessful(true);
+    onEditModalClose();
   };
 
   if (isLoading) {
@@ -285,7 +291,7 @@ function App() {
         <ModalOverlay />
         <ModalContent>
           <form onSubmit={handleSubmit(onRecordEdit)}>
-            <ModalHeader data-testid="modal-title">新規登録</ModalHeader>
+            <ModalHeader data-testid="modal-title">記録編集</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <FormControl>
