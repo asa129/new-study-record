@@ -234,6 +234,8 @@ describe("App", () => {
     );
 
     // 編集する値を入力する
+    // タイトル欄を一旦クリアしてから入力
+    await user.clear(await screen.findByTestId("title-input"));
     await user.type(
       await screen.findByTestId("title-input"),
       "タイトル更新したよ"
