@@ -44,6 +44,7 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 function App() {
   const [studyRecords, setStudyRecords] = useState<Record[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [modalFlag, setModalFlag] = useState(false); // true: 登録, false: 更新
   const {
     isOpen: isRegistModalOpen,
     onOpen: onRegistModalOpen,
@@ -82,6 +83,7 @@ function App() {
   }, []);
 
   const handleRegist = () => {
+    setModalFlag(true);
     reset();
     onRegistModalOpen();
   };
@@ -108,6 +110,7 @@ function App() {
   };
 
   const handleEdit = async (data: Partial<Record>) => {
+    setModalFlag(false);
     reset();
     // フォームの値をセット
     setValue("id", data.id);
@@ -172,14 +175,22 @@ function App() {
             登録
           </Button>
           <Modal
-            isOpen={isRegistModalOpen}
-            onClose={handleClose}
+            isOpen={modalFlag ? isRegistModalOpen : isEditModalOpen}
+            onClose={modalFlag ? handleClose : onEditModalClose}
             data-testid="modal"
           >
             <ModalOverlay />
             <ModalContent>
-              <form onSubmit={handleSubmit(onRecordRegist)}>
-                <ModalHeader data-testid="modal-title">新規登録</ModalHeader>
+              <form
+                onSubmit={
+                  modalFlag
+                    ? handleSubmit(onRecordRegist)
+                    : handleSubmit(onRecordEdit)
+                }
+              >
+                <ModalHeader data-testid="modal-title">
+                  {modalFlag ? "新規登録" : "記録編集"}
+                </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                   <FormControl>
@@ -288,69 +299,6 @@ function App() {
           </TableContainer>
         </Box>
       </Box>
-      <Modal isOpen={isEditModalOpen} onClose={onEditModalClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <form onSubmit={handleSubmit(onRecordEdit)}>
-            <ModalHeader data-testid="modal-title">記録編集</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl>
-                <FormLabel>学習内容</FormLabel>
-                <Input
-                  {...register("title", { required: true })}
-                  placeholder="学習内容"
-                  data-testid="title-input"
-                />
-                {errors.title?.type === "required" && (
-                  <p style={{ color: "red" }}>学習内容は必須です</p>
-                )}
-              </FormControl>
-              <FormControl>
-                <FormLabel>学習時間</FormLabel>
-                <Controller
-                  name="time"
-                  control={control}
-                  rules={{ required: true, min: 0 }}
-                  render={({ field }) => (
-                    <NumberInput
-                      value={field.value}
-                      onChange={(valueString) => {
-                        field.onChange(parseInt(valueString));
-                      }}
-                      data-testid="time-input"
-                    >
-                      <NumberInputField />
-                      {errors.time?.type === "required" && (
-                        <p style={{ color: "red" }}>学習時間は必須です</p>
-                      )}
-                      {errors.time?.type === "min" && (
-                        <p style={{ color: "red" }}>
-                          時間は0以上である必要があります
-                        </p>
-                      )}
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                  )}
-                />
-              </FormControl>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button
-                colorScheme="teal"
-                type="submit"
-                data-testid="submit-button"
-              >
-                登録
-              </Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </Modal>
     </>
   );
 }
