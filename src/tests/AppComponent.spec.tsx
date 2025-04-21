@@ -1,9 +1,10 @@
 import App from "../App";
-import { render, screen, waitFor } from "@testing-library/react";
+import { findByTestId, render, screen, waitFor } from "@testing-library/react";
 import {
   addStudyRecord,
   deleteStudyRecordById,
   GetAllStudyRecords,
+  updateStudyRecordById,
 } from "../lib/study-record";
 import userEvent from "@testing-library/user-event";
 import { Record } from "../domain/record";
@@ -13,6 +14,7 @@ jest.mock("../lib/study-record", () => ({
   GetAllStudyRecords: jest.fn(),
   addStudyRecord: jest.fn(),
   deleteStudyRecordById: jest.fn(),
+  updateStudyRecordById: jest.fn(),
 }));
 
 describe("App", () => {
@@ -94,8 +96,6 @@ describe("App", () => {
     await waitFor(() => {
       expect(screen.queryByText("Modal Title")).not.toBeInTheDocument();
     });
-
-    console.log("mockData", mockData);
 
     // 登録されたデータが表示されることを確認
     expect(await screen.findByText("Test Title")).toBeInTheDocument();
@@ -206,5 +206,78 @@ describe("App", () => {
     expect((await screen.findByTestId("modal-title")).textContent).toBe(
       "記録編集"
     );
+  });
+
+  it("編集して登録すると更新される", async () => {
+    const user = userEvent.setup();
+    // モックデータを作る
+    const mockData: Partial<Record>[] = [
+      { id: "1", title: "タイトル", time: 3 },
+    ];
+
+    // 初期表示用のデータ取得
+    (GetAllStudyRecords as jest.Mock).mockImplementation(() => {
+      return Promise.resolve(mockData);
+    });
+
+    render(<App />);
+
+    // 初期表示できることを確認
+    expect(await screen.findByTestId("title")).toBeInTheDocument();
+
+    // 編集ボタン押下
+    await user.click(await screen.findByTestId("edit-button"));
+
+    // モーダルが表示されるまで少し待つ
+    expect(await screen.findByTestId("modal-title")).toHaveTextContent(
+      "記録編集"
+    );
+
+    // 編集する値を入力する
+    await user.type(
+      await screen.findByTestId("title-input"),
+      "タイトル更新したよ"
+    );
+    const timeInput = await screen.findByTestId("time-input");
+    const input = timeInput.querySelector('input[role="spinbutton"]');
+    await user.clear(input!);
+    await user.type(input!, "4");
+
+    // 編集した処理を前もってモック化する
+    (updateStudyRecordById as jest.Mock).mockImplementation(() => {
+      // 更新したことにして、なにも返さない
+      return Promise.resolve([]);
+    });
+
+    // 更新後のデータを取得する
+    (GetAllStudyRecords as jest.Mock).mockImplementation(() => {
+      return Promise.resolve([
+        {
+          id: "1",
+          title: "タイトル更新したよ",
+          time: 4,
+        },
+      ]);
+    });
+
+    // 登録ボタンをクリック
+    await user.click(await screen.findByTestId("submit-button"));
+
+    // モーダルが閉じるのを待つ
+    await waitFor(() => {
+      expect(screen.queryByTestId("modal-title")).not.toBeInTheDocument();
+    });
+
+    // 更新処理が成功したことを確認
+    expect(updateStudyRecordById).toHaveBeenCalledTimes(1);
+    expect(updateStudyRecordById).toHaveBeenCalledWith({
+      id: "1",
+      title: "タイトル更新したよ",
+      time: 4,
+    });
+
+    // 更新されたデータが表示されることを確認
+    expect(await screen.findByText("タイトル更新したよ")).toBeInTheDocument();
+    expect(await screen.findByText("4")).toBeInTheDocument();
   });
 });
