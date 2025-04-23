@@ -1,54 +1,55 @@
-# React + TypeScript + Vite
+## サービス名:新・学習記録アプリ
+日々の学習内容と時間を記録できるアプリです。  
+学習記録を一覧化することで、学習の進捗状況を確認することができます。  
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 使い方
+1. [学習記録アプリ](https://new-study-record.web.app/)にアクセスする
+2. 「登録」ボタン押下
+3. 学習内容と学習時間を入力フォームに記入する
+4. 「登録」ボタンを押して記録を保存する
+5. 編集したい場合は、「編集」アイコンを押す
+6. 削除したい場合は、「削除」アイコンを押す
+## 使用技術
+React + Vite + TypeScript
+supabase  
+jest  
+react-testing-library
+ChakraUI
+react-hook-form
+## インストール・セットアップ方法
+1. リポジトリをクローン
+ ```
+ $ git clone https://github.com/asa129/new-study-record.git
+ $ cd study-record
+ ```
 
-Currently, two official plugins are available:
+2. 必要なパッケージをインストール
+ ```
+ $ npm install
+ ```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+3. Supabaseの設定
+ * [Supabase](https://supabase.com/)のアカウントを作成する
+ * 新規プロジェクトを作成する(プロジェクト名はstudy-record、データベースパスワードは適当)
+ * Table Editorで以下のテーブルを作成する
 
-## Expanding the ESLint configuration
+ テーブル名 : study-record
+ 
+ | column | type | option |
+ |:------|:-----|:-------|
+ |id|uuid| |
+ |title|varchar |non null|
+ |time|int4 |non null|
+ |created_at|timestamptz ||
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+4. プロジェクトのルートに`.env`ファイルを作成し、以下内容を追加する
+ ```
+ VITE_NEXT_PUBLIC_SUPABASE_URL=Project URL
+ VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY=シークレットキー
+ ```
+ APIURLとシークレットキーの取得は[Dashboard](https://supabase.com/dashboard/project/_/settings/api)から可能  
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+5. アプリケーションの起動
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+npm run dev
 ```
