@@ -1,5 +1,5 @@
 import App from "../App";
-import { findByTestId, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import {
   addStudyRecord,
   deleteStudyRecordById,
